@@ -1,8 +1,11 @@
-#include <iostream>
+#include "y-fight.hpp"
 
 
 int main()
 {
-	std::cout << "Hello World" << std::endl;
+	yf::game game("Y-FIGHT?");
+	
+	game.main_loop();
+
 	return 0;
 }
