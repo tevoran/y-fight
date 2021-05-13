@@ -35,8 +35,19 @@ yf::game::game(const char* game_name)
 	std::cout << "done" << std::endl;
 }
 
-void yf::game::update()
+void yf::game::update(const bool show_frame_time)
 {
+	//get current frame_time
+	old_frame_time=new_frame_time;
+	new_frame_time=std::chrono::steady_clock::now();
+	std::chrono::duration<float> dt_chrono=std::chrono::duration_cast<std::chrono::duration<float>>(new_frame_time-old_frame_time);
+	dt=dt_chrono.count();
+	if(show_frame_time)
+	{
+		std::cout << "frame_time: " << dt << "s" << std::endl;
+	}
+
+	//rendering
 	SDL_RenderPresent(renderer);
 	SDL_SetRenderDrawColor(renderer, 0, 187, 255, 0); //Skylike color
 	SDL_RenderClear(renderer);
@@ -46,8 +57,7 @@ void yf::game::main_loop()
 {
 	while(!quit)
 	{
-		update();
-		update();
-		quit=true;
+		input_handling();
+		update(0);
 	}
 }
