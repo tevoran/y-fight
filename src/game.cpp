@@ -6,7 +6,8 @@ yf::game::game(const char* game_name)
 	std::cout << "initializing game...";
 
 	SDL_Init(SDL_INIT_EVERYTHING);
-
+	TTF_Init();
+	
 	SDL_DisplayMode mode_info;
 	if(SDL_GetDesktopDisplayMode(0, &mode_info)!=0)
 	{
@@ -51,13 +52,4 @@ void yf::game::update(const bool show_frame_time)
 	SDL_RenderPresent(renderer);
 	SDL_SetRenderDrawColor(renderer, 0, 187, 255, 0); //Skylike color
 	SDL_RenderClear(renderer);
-}
-
-void yf::game::main_loop()
-{
-	while(!quit)
-	{
-		input_handling();
-		update(0);
-	}
 }

@@ -6,6 +6,12 @@
 #include <iostream>
 #include <chrono>
 
+
+#define DOUBLE_JUMP_COOLDOWN 0.15
+#define GRAVITY 1.4*(float)m_game->resy
+
+#define PHYSICS_GRAVITY_FLAG 0x01
+
 namespace yf
 {
 
@@ -13,13 +19,14 @@ namespace yf
 	{
 	private:
 		SDL_Window *window=NULL;
-		SDL_Renderer *renderer=NULL;
-		bool quit=false;
 
 		std::chrono::steady_clock::time_point old_frame_time;
 		std::chrono::steady_clock::time_point new_frame_time;
 
 	public:
+		TTF_Font *font=NULL;
+		bool quit=false;
+		SDL_Renderer *renderer=NULL;
 		int resx=0;
 		int resy=0;
 		float dt=0;
@@ -28,9 +35,27 @@ namespace yf
 		game(const char* game_name);
 
 		void update(const bool show_frame_time);
-		void main_loop();
-		void input_handling();
 	};
 
+	class object
+	{
+	private:
+		SDL_Rect src_rect;
+		SDL_Texture *texture=NULL;
+		game *m_game=NULL;
+	public:
+		SDL_Rect dst_rect;
+		float x=0;
+		float y=0;
+		float x_speed=0;
+		float y_speed=0;
 
+	public:		
+		object(yf::game *game, const char* path_to_sprite, const int sprite_width, const int sprite_height, const int drawing_width, const int drawing_height);
+		void render(const int frame);
+		void render(const int frame, const int x, const int y);
+		void physics(const uint64_t flags);
+	};
+
+	void input_handling(game& game, object& player);
 }
