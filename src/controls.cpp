@@ -11,7 +11,7 @@ float dash_y=0;
 float dash_still_active=0;
 float dash_cooldown=0;
 
-void yf::input_handling(game& game, object& player, object& cursor)
+void yf::input_handling(game& game, camera& camera, object& player, object& cursor)
 {
 	//dash
 	dash_cooldown-=game.dt;
@@ -22,8 +22,21 @@ void yf::input_handling(game& game, object& player, object& cursor)
 	if(dash_still_active>0)
 	{
 		player.x=player.x+game.dt*dash_x*DASH_SPEED;
+		player.x_speed=0;
 		player.y=player.y+game.dt*dash_y*DASH_SPEED;
+		player.y_speed=0;
 		dash_still_active-=game.dt;
+		if(dash_still_active<=0)
+		{
+			if(dash_x>=0)
+			{
+				player.x_speed=PLAYER_X_SPEED*(float)game.resx;
+			}
+			if(dash_x<0)
+			{
+				player.x_speed=-PLAYER_X_SPEED*(float)game.resx;
+			}
+		}
 	}
 
 	//cooldowns
@@ -39,10 +52,10 @@ void yf::input_handling(game& game, object& player, object& cursor)
 	{
 	}
 
-	uint32_t mouse_state=SDL_GetMouseState(&game.mousex, &game.mousey);
+	SDL_GetMouseState(&game.mousex, &game.mousey);
 	game.mousey=game.resy-game.mousey; //accommodating screen coordinates
-	cursor.x=game.mousex;
-	cursor.y=game.mousey;
+	cursor.x=game.mousex+camera.x;
+	cursor.y=game.mousey+camera.y;
 
 
 	const Uint8 *keyboard_state=SDL_GetKeyboardState(NULL);
@@ -62,6 +75,10 @@ void yf::input_handling(game& game, object& player, object& cursor)
 		player.x_speed=-PLAYER_X_SPEED*(float)game.resx;
 	}
 	if(keyboard_state[SDL_SCANCODE_D] && keyboard_state[SDL_SCANCODE_A])
+	{
+		player.x_speed=0;
+	}
+	if(!keyboard_state[SDL_SCANCODE_D] && !keyboard_state[SDL_SCANCODE_A])
 	{
 		player.x_speed=0;
 	}

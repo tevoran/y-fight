@@ -1,7 +1,14 @@
 #include "y-fight.hpp"
 
-yf::object::object(yf::game *game, const char* path_to_sprite, const int sprite_width, const int sprite_height, const int drawing_width, const int drawing_height)
+yf::object::object(	yf::game *game,
+					camera *camera,
+					const char* path_to_sprite,
+					const int sprite_width,
+					const int sprite_height,
+					const int drawing_width,
+					const int drawing_height)
 {
+	m_camera=camera;
 	m_game=game;
 	SDL_Surface *tmp_surface=IMG_Load(path_to_sprite);
 	if(tmp_surface==NULL)
@@ -25,8 +32,8 @@ void yf::object::render(const int frame) //animations have to be in a row in an 
 {
 	src_rect.x=frame*src_rect.w;
 	src_rect.y=0;
-	dst_rect.x=x;
-	dst_rect.y=m_game->resy-y; //making the bottom of the screen equal y=0
+	dst_rect.x=x-m_camera->x;
+	dst_rect.y=(m_game->resy-y)-m_camera->y; //making the bottom of the screen equal y=0
 	SDL_RenderCopy(m_game->renderer, texture, &src_rect, &dst_rect);
 }
 
@@ -34,8 +41,8 @@ void yf::object::render(const int frame, const int x, const int y) //animations 
 {
 	src_rect.x=frame*src_rect.w;
 	src_rect.y=0;
-	dst_rect.x=x;
-	dst_rect.y=m_game->resy-y; //making the bottom of the screen equal y=0
+	dst_rect.x=x-m_camera->x;
+	dst_rect.y=(m_game->resy-y)-m_camera->y; //making the bottom of the screen equal y=0
 	SDL_RenderCopy(m_game->renderer, texture, &src_rect, &dst_rect);
 }
 
@@ -53,4 +60,5 @@ void yf::object::physics(const uint64_t flags)
 	{
 		y=dst_rect.h;
 	}
+
 }
