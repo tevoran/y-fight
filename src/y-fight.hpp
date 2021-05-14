@@ -6,12 +6,15 @@
 #include <iostream>
 #include <chrono>
 #include <cmath>
+#include <vector>
 
 
 #define DOUBLE_JUMP_COOLDOWN 0.15
 #define DASH_SPEED 1.4*game.resx
 #define DASH_DURATION 0.3
 #define DASH_COOLDOWN DASH_DURATION+1
+#define WORLD_SIZE_X 100
+#define WORLD_SIZE_Y 25
 #define GRAVITY 1.7*(float)m_game->resy
 
 #define PHYSICS_GRAVITY_FLAG 0x01
@@ -83,8 +86,12 @@ namespace yf
 	class world
 	{
 	private:
+		std::vector<object> world_tileset;
+		game *m_game=NULL;
+		int world_filling[WORLD_SIZE_X][WORLD_SIZE_Y];
 	public:
-		world();
+		world(game* game, camera *camera, const char* path_to_tileset);
+		void render();
 	};
 
 	void input_handling(game& game, camera& camera, object& player, object& cursor);
