@@ -8,7 +8,10 @@
 
 
 #define DOUBLE_JUMP_COOLDOWN 0.15
-#define GRAVITY 1.4*(float)m_game->resy
+#define DASH_SPEED game.resx
+#define DASH_DURATION 0.3
+#define DASH_COOLDOWN DASH_DURATION+0.5
+#define GRAVITY 1.7*(float)m_game->resy
 
 #define PHYSICS_GRAVITY_FLAG 0x01
 
@@ -29,6 +32,8 @@ namespace yf
 		SDL_Renderer *renderer=NULL;
 		int resx=0;
 		int resy=0;
+		int mousex=0;
+		int mousey=0;
 		float dt=0;
 
 	public:
@@ -57,5 +62,5 @@ namespace yf
 		void physics(const uint64_t flags);
 	};
 
-	void input_handling(game& game, object& player);
+	void input_handling(game& game, object& player, object& cursor);
 }

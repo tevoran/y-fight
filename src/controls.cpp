@@ -1,13 +1,31 @@
 #include "y-fight.hpp"
 
-#define PLAYER_X_SPEED 0.17
-#define PLAYER_Y_SPEED 1.1
+#define PLAYER_X_SPEED 0.2
+#define PLAYER_Y_SPEED 1.4
 
 bool double_jump=true;
 float double_jump_cooldown=0.1;
 
-void yf::input_handling(game& game, object& player)
+float dash_x=0;
+float dash_y=0;
+float dash_still_active=0;
+float dash_cooldown=0;
+
+void yf::input_handling(game& game, object& player, object& cursor)
 {
+	//dash
+	dash_cooldown-=game.dt;
+	if(dash_cooldown<0)
+	{
+		dash_cooldown=0;
+	}
+	if(dash_still_active>0)
+	{
+		player.x=player.x+game.dt*dash_x*DASH_SPEED;
+		player.y=player.y+game.dt*dash_y*DASH_SPEED;
+		dash_still_active-=game.dt;
+	}
+
 	//cooldowns
 	double_jump_cooldown-=game.dt;
 	if(double_jump_cooldown<0)
@@ -15,11 +33,18 @@ void yf::input_handling(game& game, object& player)
 		double_jump_cooldown=0;
 	}
 
+
 	SDL_Event event;
 	while(SDL_PollEvent(&event))
 	{
-
 	}
+
+	uint32_t mouse_state=SDL_GetMouseState(&game.mousex, &game.mousey);
+	game.mousey=game.resy-game.mousey; //accommodating screen coordinates
+	cursor.x=game.mousex;
+	cursor.y=game.mousey;
+
+
 	const Uint8 *keyboard_state=SDL_GetKeyboardState(NULL);
 	if(keyboard_state[SDL_SCANCODE_ESCAPE])
 	{
@@ -44,7 +69,7 @@ void yf::input_handling(game& game, object& player)
 	//Y-Axis
 	if(keyboard_state[SDL_SCANCODE_SPACE] && double_jump==true && double_jump_cooldown==0) //second jump
 	{
-		player.y_speed=1.2*PLAYER_Y_SPEED*(float)game.resy;
+		player.y_speed=PLAYER_Y_SPEED*(float)game.resy;
 		double_jump=false;
 	}
 	if(keyboard_state[SDL_SCANCODE_SPACE] && player.y==player.dst_rect.h) //first jump
@@ -52,5 +77,17 @@ void yf::input_handling(game& game, object& player)
 		player.y_speed=PLAYER_Y_SPEED*(float)game.resy;
 		double_jump=true;
 		double_jump_cooldown=DOUBLE_JUMP_COOLDOWN;
+	}
+
+	//activating dash
+	if(keyboard_state[SDL_SCANCODE_V] && dash_cooldown==0) //first jump
+	{
+		dash_x=cursor.x-player.x;
+		dash_y=cursor.y-player.y;
+		float normalize_sum=sqrt(dash_x*dash_x+dash_y*dash_y);
+		dash_x=dash_x/normalize_sum;
+		dash_y=dash_y/normalize_sum;
+		dash_still_active=DASH_DURATION;
+		dash_cooldown=DASH_COOLDOWN;
 	}
 }

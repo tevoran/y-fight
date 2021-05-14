@@ -33,6 +33,8 @@ yf::game::game(const char* game_name)
 		exit(0);
 	}
 
+	SDL_ShowCursor(SDL_DISABLE);
+
 	std::cout << "done" << std::endl;
 }
 
