@@ -38,7 +38,7 @@ yf::game::game(const char* game_name)
 	std::cout << "done" << std::endl;
 }
 
-void yf::game::update(const bool show_frame_time)
+void yf::game::update(const bool show_frame_time, camera& camera)
 {
 	//get current frame_time
 	old_frame_time=new_frame_time;
