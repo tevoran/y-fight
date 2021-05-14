@@ -10,7 +10,7 @@
 
 
 #define DOUBLE_JUMP_COOLDOWN 0.15
-#define DASH_SPEED 1.4*game.resx
+#define DASH_SPEED 1.4*1.77*game.resy
 #define DASH_DURATION 0.3
 #define DASH_COOLDOWN DASH_DURATION+1
 #define WORLD_SIZE_X 100

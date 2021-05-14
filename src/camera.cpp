@@ -46,7 +46,7 @@ void yf::camera::update(float frame_dt, float player_x, float player_y)
 		}
 
 		past_frame_x[num_delayed_frames-1]=player_x-m_resx/2;
-		past_frame_y[num_delayed_frames-1]=-player_y+m_player_height;
+		past_frame_y[num_delayed_frames-1]=-player_y+5*m_player_height;
 
 		camera_new_frame_cooldown=(float)1/(float)CAMERA_FPS;
 	}
