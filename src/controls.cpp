@@ -55,7 +55,7 @@ void yf::input_handling(game& game, camera& camera, object& player, object& curs
 	SDL_GetMouseState(&game.mousex, &game.mousey);
 	game.mousey=game.resy-game.mousey; //accommodating screen coordinates
 	cursor.x=game.mousex+camera.x;
-	cursor.y=game.mousey+camera.y;
+	cursor.y=game.mousey-camera.y;
 
 
 	const Uint8 *keyboard_state=SDL_GetKeyboardState(NULL);
