@@ -104,4 +104,6 @@ namespace yf
 	};
 
 	void input_handling(game& game, camera& camera, object& player, object& cursor);
+	bool collision(object& a, object& b); //returns true, if there is a collision, else false
+	
 }
