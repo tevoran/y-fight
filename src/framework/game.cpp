@@ -35,10 +35,11 @@ yf::game::game(const char* game_name)
 
 	SDL_ShowCursor(SDL_DISABLE);
 
+	srand(time(NULL));
 	std::cout << "done" << std::endl;
 }
 
-void yf::game::update(const bool show_frame_time, camera& camera)
+void yf::game::update(const bool show_frame_time, const int target_FPS, camera& camera)
 {
 	//get current frame_time
 	old_frame_time=new_frame_time;
@@ -47,7 +48,7 @@ void yf::game::update(const bool show_frame_time, camera& camera)
 	dt=dt_chrono.count();
 	if(show_frame_time)
 	{
-		std::cout << "frame_time: " << dt << "s" << std::endl;
+		std::cout << "frame_calculation_time: " << dt*1000 << "ms" << std::endl;
 	}
 
 	//rendering

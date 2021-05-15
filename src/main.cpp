@@ -14,8 +14,12 @@ int main(int argc, char *argv[])
 
 	while(!game.quit)
 	{
+		world.interact(player);
+
 		input_handling(game, camera, player, cursor);
+		
 		player.physics(PHYSICS_GRAVITY_FLAG);
+		
 		camera.update(game.dt, player.x, player.y);
 
 		world.render();
@@ -23,7 +27,7 @@ int main(int argc, char *argv[])
 
 		cursor.render(0);
 
-		game.update(false, camera);
+		game.update(true, 60, camera);
 	}
 	return 0;
 }

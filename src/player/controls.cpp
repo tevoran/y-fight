@@ -89,9 +89,10 @@ void yf::input_handling(game& game, camera& camera, object& player, object& curs
 		player.y_speed=PLAYER_Y_SPEED*(float)game.resy;
 		double_jump=false;
 	}
-	if(keyboard_state[SDL_SCANCODE_SPACE] && player.y==player.dst_rect.h) //first jump
+	if(keyboard_state[SDL_SCANCODE_SPACE] && player.standing==true) //first jump
 	{
 		player.y_speed=PLAYER_Y_SPEED*(float)game.resy;
+		player.standing=false;
 		double_jump=true;
 		double_jump_cooldown=DOUBLE_JUMP_COOLDOWN;
 	}

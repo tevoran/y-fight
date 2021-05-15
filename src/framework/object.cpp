@@ -52,13 +52,13 @@ void yf::object::physics(const uint64_t flags)
 	x=x+m_game->dt*x_speed;
 	y=y+m_game->dt*y_speed;
 
-	if((flags&PHYSICS_GRAVITY_FLAG) && y>=dst_rect.h)
+	if((flags&PHYSICS_GRAVITY_FLAG))
 	{
 		y_speed=y_speed-m_game->dt*GRAVITY;
 	}
-	if(y<dst_rect.h)
+	if(y<0)
 	{
-		y=dst_rect.h;
+		y=0;
 	}
 
 }

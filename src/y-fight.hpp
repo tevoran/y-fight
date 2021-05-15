@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -7,6 +7,7 @@
 #include <chrono>
 #include <cmath>
 #include <vector>
+#include <cstdlib>
 
 
 #define DOUBLE_JUMP_COOLDOWN 0.15
@@ -14,7 +15,7 @@
 #define DASH_DURATION 0.3
 #define DASH_COOLDOWN DASH_DURATION+1
 #define WORLD_SIZE_X 100
-#define WORLD_SIZE_Y 25
+#define WORLD_SIZE_Y 1000
 #define GRAVITY 1.7*(float)m_game->resy
 
 #define PHYSICS_GRAVITY_FLAG 0x01
@@ -60,7 +61,7 @@ namespace yf
 	public:
 		game(const char* game_name);
 
-		void update(const bool show_frame_time, camera& camera);
+		void update(const bool show_frame_time, const int target_FPS, camera& camera);
 	};
 
 
@@ -77,6 +78,7 @@ namespace yf
 		float y=0;
 		float x_speed=0;
 		float y_speed=0;
+		bool standing=false;
 
 	public:		
 		object(	yf::game *game,
@@ -96,14 +98,16 @@ namespace yf
 	private:
 		std::vector<object> world_tileset;
 		game *m_game=NULL;
+		camera *m_camera=NULL;
 		int world_filling[WORLD_SIZE_X][WORLD_SIZE_Y];
 	public:
 		world(game* game, camera *camera, const char* path_to_tileset);
 		void render();
-		void collision(object& player);
+		void interact(object& player);
 	};
 
 	void input_handling(game& game, camera& camera, object& player, object& cursor);
 	bool collision(object& a, object& b); //returns true, if there is a collision, else false
+	bool collision(SDL_Rect& a, SDL_Rect& b); //returns true, if there is a collision, else false
 	
 }
