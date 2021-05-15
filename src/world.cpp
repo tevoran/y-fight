@@ -4,8 +4,8 @@
 #define TILE_BACKGROUND 1
 
 
-#define TILE_SIZE_X (int)(0.026*(float)m_game->resx)
-#define TILE_SIZE_Y (int)(0.046*(float)m_game->resy)
+#define TILE_SIZE_X (int)(0.052*(float)m_game->resx)
+#define TILE_SIZE_Y (int)(0.096*(float)m_game->resy)
 
 yf::world::world(game* game, camera *camera, const char* path_to_tileset)
 {
@@ -35,4 +35,9 @@ void yf::world::render()
 			world_tileset[0].render(world_filling[ix][iy], ix*TILE_SIZE_X, iy*TILE_SIZE_Y);
 		}
 	}
+}
+
+void yf::world::collision(object& player)
+{
+	
 }

@@ -100,6 +100,7 @@ namespace yf
 	public:
 		world(game* game, camera *camera, const char* path_to_tileset);
 		void render();
+		void collision(object& player);
 	};
 
 	void input_handling(game& game, camera& camera, object& player, object& cursor);
