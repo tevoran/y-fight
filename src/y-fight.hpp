@@ -11,11 +11,15 @@
 
 
 #define DOUBLE_JUMP_COOLDOWN 0.15
-#define DASH_SPEED 1.4*1.77*game.resy
+#define DASH_SPEED 1*1.77*game.resy
 #define DASH_DURATION 0.3
-#define DASH_COOLDOWN DASH_DURATION+1
-#define WORLD_SIZE_X 100
-#define WORLD_SIZE_Y 1000
+#define DASH_COOLDOWN DASH_DURATION+1.3
+#define AFTER_DASH_SPEED 0.25
+
+//should be divisible by 20
+#define WORLD_SIZE_X 20
+#define WORLD_SIZE_Y 20 
+
 #define GRAVITY 1.7*(float)m_game->resy
 
 #define PHYSICS_GRAVITY_FLAG 0x01
@@ -101,7 +105,8 @@ namespace yf
 		camera *m_camera=NULL;
 		int world_filling[WORLD_SIZE_X][WORLD_SIZE_Y];
 	public:
-		world(game* game, camera *camera, const char* path_to_tileset);
+		//player gets located at the level entrance
+		world(game* game, camera *camera, const char* path_to_tileset, object& player);
 		void render();
 		void interact(object& player);
 	};

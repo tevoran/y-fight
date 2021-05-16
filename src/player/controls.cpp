@@ -21,21 +21,13 @@ void yf::input_handling(game& game, camera& camera, object& player, object& curs
 	}
 	if(dash_still_active>0)
 	{
-		player.x=player.x+game.dt*dash_x*DASH_SPEED;
-		player.x_speed=0;
-		player.y=player.y+game.dt*dash_y*DASH_SPEED;
-		player.y_speed=0;
+		player.x_speed=DASH_SPEED*dash_x;
+		player.y_speed=DASH_SPEED*dash_y;
 		dash_still_active-=game.dt;
 		if(dash_still_active<=0)
 		{
-			if(dash_x>=0)
-			{
-				player.x_speed=PLAYER_X_SPEED*(float)game.resx;
-			}
-			if(dash_x<0)
-			{
-				player.x_speed=-PLAYER_X_SPEED*(float)game.resx;
-			}
+			player.x_speed=AFTER_DASH_SPEED*player.x_speed;
+			player.y_speed=AFTER_DASH_SPEED*player.y_speed;
 		}
 	}
 
@@ -80,7 +72,7 @@ void yf::input_handling(game& game, camera& camera, object& player, object& curs
 	}
 	if(!keyboard_state[SDL_SCANCODE_D] && !keyboard_state[SDL_SCANCODE_A])
 	{
-		player.x_speed=0;
+		//player.x_speed=0;
 	}
 
 	//Y-Axis
@@ -98,7 +90,7 @@ void yf::input_handling(game& game, camera& camera, object& player, object& curs
 	}
 
 	//activating dash
-	if(keyboard_state[SDL_SCANCODE_V] && dash_cooldown==0) //first jump
+	if(keyboard_state[SDL_SCANCODE_V] && dash_cooldown==0)
 	{
 		dash_x=cursor.x-player.x;
 		dash_y=cursor.y-player.y;
