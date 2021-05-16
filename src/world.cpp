@@ -5,9 +5,12 @@
 #define TILE_BORDER_WALL 2
 #define TILE_ENTRANCE 3
 
-
 #define TILE_SIZE_X (int)(0.052*(float)m_game->resx)
 #define TILE_SIZE_Y (int)(0.096*(float)m_game->resy)
+
+#define ROOM_EMPTY 0
+#define ROOM_LEVEL_ENTRANCE 1
+#define ROOM_MAIN_PATH 2
 
 //player gets located at the level entrance
 yf::world::world(game* game, camera *camera, const char* path_to_tileset, object& player)
@@ -27,7 +30,7 @@ yf::world::world(game* game, camera *camera, const char* path_to_tileset, object
 		}
 	}
 
-	//creating border
+	//creating level border
 	for(int ix=0; ix<WORLD_SIZE_X; ix++)
 	{
 		world_filling[ix][0]=TILE_BORDER_WALL;
@@ -39,15 +42,34 @@ yf::world::world(game* game, camera *camera, const char* path_to_tileset, object
 		world_filling[WORLD_SIZE_X-1][iy]=TILE_BORDER_WALL;
 	}
 
-	//creating level entrance
-	int entrance_x=rand()%(WORLD_SIZE_X-2)+1;
-	int entrance_y=rand()%(WORLD_SIZE_Y-6)+2;
+	//creating rooms
+	for(int iy=0; iy<WORLD_GRID_SIZE_Y; iy++)
+	{
+		for(int ix=0; ix<WORLD_GRID_SIZE_X; ix++)
+		{
+			room[ix][iy]=ROOM_EMPTY;
+		}
+	}
+
+	//creating level entrance room
+	int room_entrance_x=rand()%(WORLD_GRID_SIZE_X-1);
+	int room_entrance_y=rand()%(WORLD_GRID_SIZE_Y-1);
+	room[room_entrance_x][room_entrance_y]=ROOM_LEVEL_ENTRANCE;
+	std::cout << "entrance room is: " << room_entrance_x << "x" << room_entrance_y << std::endl;
+
+	int entrance_x=rand()%(WORLD_GRID_SIZE-2)+1;
+	entrance_x=(room_entrance_x*WORLD_GRID_SIZE)+entrance_x;
+	int entrance_y=rand()%(WORLD_GRID_SIZE-6)+2;
+	entrance_y=(room_entrance_y*WORLD_GRID_SIZE)+entrance_y;
+
+	std::cout << "entrance: " << entrance_x << "x" << entrance_y << std::endl;
 
 	world_filling[entrance_x][entrance_y+1]=TILE_ENTRANCE;
 	world_filling[entrance_x][entrance_y]=TILE_GROUND;
 
-	player.x=entrance_x*TILE_SIZE_X;
-	player.y=(entrance_y*(TILE_SIZE_Y)-3);
+	create_main_path_room(room_entrance_x, room_entrance_y, false, false, false, false);
+	player.x=(entrance_x)*TILE_SIZE_X;
+	player.y=(entrance_y*(TILE_SIZE_Y));
 
 
 }
@@ -81,7 +103,7 @@ void yf::world::interact(object& player)
 	//checking right side
 	if(player_tile_x<WORLD_SIZE_X-1) //avoiding segfaults
 	{
-		if(world_filling[player_tile_x+1][player_tile_y]==TILE_BORDER_WALL)
+		if(	world_filling[player_tile_x+1][player_tile_y]==TILE_BORDER_WALL)
 		{
 			world_collision.x=(player_tile_x+1)*TILE_SIZE_X-m_camera->x;
 			world_collision.y=(m_game->resy-(player_tile_y)*TILE_SIZE_Y)-m_camera->y;
@@ -96,7 +118,7 @@ void yf::world::interact(object& player)
 	//checking left side
 	if(player_tile_x>0) //avoiding segfaults
 	{
-		if(world_filling[player_tile_x-1][player_tile_y]==TILE_BORDER_WALL)
+		if(	world_filling[player_tile_x-1][player_tile_y]==TILE_BORDER_WALL)
 		{
 			world_collision.x=(player_tile_x-1)*TILE_SIZE_X-m_camera->x;
 			world_collision.y=(m_game->resy-(player_tile_y)*TILE_SIZE_Y)-m_camera->y;
@@ -111,7 +133,7 @@ void yf::world::interact(object& player)
 	//checking top side
 	if(player_tile_y<WORLD_SIZE_Y-1) //avoiding segfaults
 	{
-		if(world_filling[player_tile_x][player_tile_y+1]==TILE_BORDER_WALL)
+		if(	world_filling[player_tile_x][player_tile_y+1]==TILE_BORDER_WALL)
 		{
 			world_collision.x=(player_tile_x)*TILE_SIZE_X-m_camera->x;
 			world_collision.y=(m_game->resy-(player_tile_y+1)*TILE_SIZE_Y)-m_camera->y;
@@ -126,7 +148,7 @@ void yf::world::interact(object& player)
 	//checking bottom side
 	if(player_tile_y>0) //avoiding segfaults
 	{
-		if(world_filling[player_tile_x][player_tile_y-1]==TILE_BORDER_WALL)
+		if(	world_filling[player_tile_x][player_tile_y-1]==TILE_BORDER_WALL)
 		{
 			world_collision.x=(player_tile_x)*TILE_SIZE_X-m_camera->x;
 			world_collision.y=(m_game->resy-(player_tile_y-1)*TILE_SIZE_Y)-m_camera->y;
@@ -140,6 +162,68 @@ void yf::world::interact(object& player)
 		}
 	}
 
+/*	//collision with ground tiles
+	//checking right side
+	if(player_tile_x<WORLD_SIZE_X-1) //avoiding segfaults
+	{
+		if(world_filling[player_tile_x+1][player_tile_y]==TILE_GROUND)
+		{
+			world_collision.x=(player_tile_x+1)*TILE_SIZE_X-m_camera->x;
+			world_collision.y=(m_game->resy-(player_tile_y)*TILE_SIZE_Y)-m_camera->y;
+			if(collision(player.dst_rect, world_collision))
+			{
+				player.x=(player_tile_x+1)*TILE_SIZE_X-player.dst_rect.w;
+				player.x_speed=0;
+			}
+		}
+	}
+
+	//checking left side
+	if(player_tile_x>0) //avoiding segfaults
+	{
+		if(world_filling[player_tile_x-1][player_tile_y]==TILE_GROUND)
+		{
+			world_collision.x=(player_tile_x-1)*TILE_SIZE_X-m_camera->x;
+			world_collision.y=(m_game->resy-(player_tile_y)*TILE_SIZE_Y)-m_camera->y;
+			if(collision(player.dst_rect, world_collision))
+			{
+				player.x=(player_tile_x)*TILE_SIZE_X;
+				player.x_speed=0;
+			}
+		}
+	}
+
+	//checking top side
+	if(player_tile_y<WORLD_SIZE_Y-1) //avoiding segfaults
+	{
+		if(world_filling[player_tile_x][player_tile_y+1]==TILE_GROUND)
+		{
+			world_collision.x=(player_tile_x)*TILE_SIZE_X-m_camera->x;
+			world_collision.y=(m_game->resy-(player_tile_y+1)*TILE_SIZE_Y)-m_camera->y;
+			if(collision(player.dst_rect, world_collision))
+			{
+				player.y=(player_tile_y)*TILE_SIZE_Y;
+				player.y_speed=0;
+			}
+		}
+	}
+
+	//checking bottom side
+	if(player_tile_y>0) //avoiding segfaults
+	{
+		if(world_filling[player_tile_x][player_tile_y-1]==TILE_GROUND)
+		{
+			world_collision.x=(player_tile_x)*TILE_SIZE_X-m_camera->x;
+			world_collision.y=(m_game->resy-(player_tile_y-1)*TILE_SIZE_Y)-m_camera->y;
+			if(collision(player.dst_rect, world_collision))
+			{
+				player.y=(player_tile_y-1)*TILE_SIZE_Y+player.dst_rect.h-1;
+				player.y_speed=0;
+				player.standing=true;
+				player.x_speed=0.9*player.x_speed;				
+			}
+		}
+	}*/
 
 	//collision with ground tiles
 	for(int iy=0; iy<WORLD_SIZE_Y; iy++)
@@ -164,5 +248,61 @@ void yf::world::interact(object& player)
 				}
 			}
 		}
+	}
+}
+
+void yf::world::create_main_path_room(	const int room_x, 
+									const int room_y, 
+									const bool gate_left, 
+									const bool gate_top, 
+									const bool gate_right, 
+									const bool gate_bottom)
+{
+	room[room_x][room_y]=ROOM_MAIN_PATH;
+
+	//making room border
+	//floor
+	for(int i=0; i<WORLD_GRID_SIZE; i++)
+	{
+		world_filling[room_x*WORLD_GRID_SIZE+i][room_y*WORLD_GRID_SIZE]=TILE_BORDER_WALL;
+	}
+	//ceiling
+	for(int i=0; i<WORLD_GRID_SIZE; i++)
+	{
+		world_filling[room_x*WORLD_GRID_SIZE+i][room_y*WORLD_GRID_SIZE+WORLD_GRID_SIZE-1]=TILE_BORDER_WALL;
+	}
+	//left wall
+	for(int i=0; i<WORLD_GRID_SIZE; i++)
+	{
+		world_filling[room_x*WORLD_GRID_SIZE][room_y*WORLD_GRID_SIZE+i]=TILE_BORDER_WALL;
+	}
+	//right wall
+	for(int i=0; i<WORLD_GRID_SIZE; i++)
+	{
+		world_filling[room_x*WORLD_GRID_SIZE+WORLD_GRID_SIZE-1][room_y*WORLD_GRID_SIZE+i]=TILE_BORDER_WALL;
+	}
+
+	//creating random ground segments
+	int num_floor_segments=rand()%WORLD_MAX_FLOOR_SEGMENTS;
+	for(int i=0; i<num_floor_segments; i++)
+	{
+		int location_x=rand()%(WORLD_GRID_SIZE-2)+1;
+		int location_y=rand()%(WORLD_GRID_SIZE-2);
+		int seg_length=rand()%(WORLD_GRID_SIZE/2);
+
+		for(int i=0; i<seg_length; i++)
+		{
+			if(world_filling[room_x*WORLD_GRID_SIZE+location_x+i][room_y*WORLD_GRID_SIZE+location_y]==TILE_ENTRANCE)
+			{
+				continue;
+			}
+
+			world_filling[room_x*WORLD_GRID_SIZE+location_x+i][room_y*WORLD_GRID_SIZE+location_y]=TILE_GROUND;
+			if((location_x+i)>=(WORLD_GRID_SIZE-2))
+			{
+				break;
+			}
+		}
+
 	}
 }

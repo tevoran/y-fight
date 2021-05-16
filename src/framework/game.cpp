@@ -53,6 +53,6 @@ void yf::game::update(const bool show_frame_time, const int target_FPS, camera& 
 
 	//rendering
 	SDL_RenderPresent(renderer);
-	SDL_SetRenderDrawColor(renderer, 0, 187, 255, 0); //Skylike color
+	SDL_SetRenderDrawColor(renderer, 16, 11, 9, 0); //cavelike background color
 	SDL_RenderClear(renderer);
 }

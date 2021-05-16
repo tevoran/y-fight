@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
 	yf::game game("Y-FIGHT");
 	yf::camera camera(0.2, game.resx, game.resy, (int)(0.046*(float)game.resy));
-	yf::object player(&game, &camera, "../assets/player.png", 16, 16, (int)(0.052*(float)game.resx), (int)(0.096*(float)game.resy));
+	yf::object player(&game, &camera, "../assets/player.png", 9, 16, (int)(0.030*(float)game.resx), (int)(0.096*(float)game.resy));
 	yf::world world(&game, &camera, "../assets/tileset2.png", player);
 	yf::object cursor(&game, &camera, "../assets/cursor.png", 16, 16, (int)(0.016*(float)game.resx), (int)(0.029*(float)game.resy));
 
@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 
 		cursor.render(0);
 
-		game.update(false, 60, camera);
+		game.update(true, 60, camera);
 	}
 	return 0;
 }
