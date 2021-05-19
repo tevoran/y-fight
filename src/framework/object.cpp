@@ -56,9 +56,5 @@ void yf::object::physics(const uint64_t flags)
 	{
 		y_speed=y_speed-m_game->dt*GRAVITY;
 	}
-	if(y<0)
-	{
-		y=0;
-	}
 
 }

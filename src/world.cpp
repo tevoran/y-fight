@@ -69,8 +69,9 @@ yf::world::world(game* game, camera *camera, const char* path_to_tileset, object
 
 	create_main_path_room(room_entrance_x, room_entrance_y, false, false, false, false);
 	player.x=(entrance_x)*TILE_SIZE_X;
-	player.y=(entrance_y*(TILE_SIZE_Y));
+	player.y=(entrance_y+1)*(TILE_SIZE_Y);
 
+	std::cout << player.x << " " << player.y << std::endl;
 
 }
 
@@ -148,6 +149,7 @@ void yf::world::interact(object& player)
 	//checking bottom side
 	if(player_tile_y>0) //avoiding segfaults
 	{
+		//border wall tiles
 		if(	world_filling[player_tile_x][player_tile_y-1]==TILE_BORDER_WALL)
 		{
 			world_collision.x=(player_tile_x)*TILE_SIZE_X-m_camera->x;
@@ -160,57 +162,8 @@ void yf::world::interact(object& player)
 				player.x_speed=0.9*player.x_speed;				
 			}
 		}
-	}
 
-/*	//collision with ground tiles
-	//checking right side
-	if(player_tile_x<WORLD_SIZE_X-1) //avoiding segfaults
-	{
-		if(world_filling[player_tile_x+1][player_tile_y]==TILE_GROUND)
-		{
-			world_collision.x=(player_tile_x+1)*TILE_SIZE_X-m_camera->x;
-			world_collision.y=(m_game->resy-(player_tile_y)*TILE_SIZE_Y)-m_camera->y;
-			if(collision(player.dst_rect, world_collision))
-			{
-				player.x=(player_tile_x+1)*TILE_SIZE_X-player.dst_rect.w;
-				player.x_speed=0;
-			}
-		}
-	}
-
-	//checking left side
-	if(player_tile_x>0) //avoiding segfaults
-	{
-		if(world_filling[player_tile_x-1][player_tile_y]==TILE_GROUND)
-		{
-			world_collision.x=(player_tile_x-1)*TILE_SIZE_X-m_camera->x;
-			world_collision.y=(m_game->resy-(player_tile_y)*TILE_SIZE_Y)-m_camera->y;
-			if(collision(player.dst_rect, world_collision))
-			{
-				player.x=(player_tile_x)*TILE_SIZE_X;
-				player.x_speed=0;
-			}
-		}
-	}
-
-	//checking top side
-	if(player_tile_y<WORLD_SIZE_Y-1) //avoiding segfaults
-	{
-		if(world_filling[player_tile_x][player_tile_y+1]==TILE_GROUND)
-		{
-			world_collision.x=(player_tile_x)*TILE_SIZE_X-m_camera->x;
-			world_collision.y=(m_game->resy-(player_tile_y+1)*TILE_SIZE_Y)-m_camera->y;
-			if(collision(player.dst_rect, world_collision))
-			{
-				player.y=(player_tile_y)*TILE_SIZE_Y;
-				player.y_speed=0;
-			}
-		}
-	}
-
-	//checking bottom side
-	if(player_tile_y>0) //avoiding segfaults
-	{
+		//ground tiles
 		if(world_filling[player_tile_x][player_tile_y-1]==TILE_GROUND)
 		{
 			world_collision.x=(player_tile_x)*TILE_SIZE_X-m_camera->x;
@@ -220,12 +173,13 @@ void yf::world::interact(object& player)
 				player.y=(player_tile_y-1)*TILE_SIZE_Y+player.dst_rect.h-1;
 				player.y_speed=0;
 				player.standing=true;
-				player.x_speed=0.9*player.x_speed;				
+				player.x_speed=0;				
 			}
 		}
-	}*/
+	}
 
-	//collision with ground tiles
+
+/*	//collision with ground tiles
 	for(int iy=0; iy<WORLD_SIZE_Y; iy++)
 	{
 		for(int ix=0; ix<WORLD_SIZE_X; ix++)
@@ -248,7 +202,7 @@ void yf::world::interact(object& player)
 				}
 			}
 		}
-	}
+	}*/
 }
 
 void yf::world::create_main_path_room(	const int room_x, 

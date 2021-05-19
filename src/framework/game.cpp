@@ -34,7 +34,8 @@ yf::game::game(const char* game_name)
 	}
 
 	SDL_ShowCursor(SDL_DISABLE);
-
+	new_frame_time=std::chrono::steady_clock::now();
+	
 	srand(time(NULL));
 	std::cout << "done" << std::endl;
 }

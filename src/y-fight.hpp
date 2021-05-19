@@ -18,9 +18,9 @@
 #define AFTER_DASH_SPEED 0.25
 
 //World parameters
-#define WORLD_GRID_SIZE 30
-#define WORLD_GRID_SIZE_X 10 //number of rooms in x-direction
-#define WORLD_GRID_SIZE_Y 10 //number of rooms in y-direction
+#define WORLD_GRID_SIZE 10
+#define WORLD_GRID_SIZE_X 2 //number of rooms in x-direction
+#define WORLD_GRID_SIZE_Y 2 //number of rooms in y-direction
 #define WORLD_SIZE_X WORLD_GRID_SIZE*WORLD_GRID_SIZE_X
 #define WORLD_SIZE_Y WORLD_GRID_SIZE*WORLD_GRID_SIZE_Y
 #define WORLD_MAIN_PATH_NUM_ROOMS 15
