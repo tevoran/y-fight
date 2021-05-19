@@ -18,14 +18,28 @@
 #define AFTER_DASH_SPEED 0.25
 
 //World parameters
-#define WORLD_GRID_SIZE 10
-#define WORLD_GRID_SIZE_X 2 //number of rooms in x-direction
-#define WORLD_GRID_SIZE_Y 2 //number of rooms in y-direction
+#define WORLD_GRID_SIZE 15
+#define WORLD_GRID_SIZE_X 5 //number of rooms in x-direction
+#define WORLD_GRID_SIZE_Y 5 //number of rooms in y-direction
 #define WORLD_SIZE_X WORLD_GRID_SIZE*WORLD_GRID_SIZE_X
 #define WORLD_SIZE_Y WORLD_GRID_SIZE*WORLD_GRID_SIZE_Y
-#define WORLD_MAIN_PATH_NUM_ROOMS 15
+#define WORLD_MAIN_PATH_NUM_ROOMS 2
 
 #define WORLD_MAX_FLOOR_SEGMENTS 20
+
+#define TILE_GROUND 0
+#define TILE_BACKGROUND 1
+#define TILE_BORDER_WALL 2
+#define TILE_ENTRANCE 3
+
+#define TILE_SIZE_X (int)(0.052*(float)m_game->resx)
+#define TILE_SIZE_Y (int)(0.096*(float)m_game->resy)
+
+#define ROOM_EMPTY 0
+#define ROOM_LEVEL_ENTRANCE 1
+#define ROOM_MAIN_PATH 2
+
+
 
 #define GRAVITY 1.7*(float)m_game->resy
 
@@ -114,10 +128,8 @@ namespace yf
 		int room[WORLD_GRID_SIZE_X][WORLD_GRID_SIZE_Y];
 		void create_main_path_room(	const int room_x, 
 									const int room_y, 
-									const bool gate_left, 
-									const bool gate_top, 
-									const bool gate_right, 
-									const bool gate_bottom);
+									const int gate_entrance,
+									const int gate_exit);
 	public:
 		//player gets located at the level entrance
 		world(game* game, camera *camera, const char* path_to_tileset, object& player);
