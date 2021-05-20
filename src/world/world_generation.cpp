@@ -85,20 +85,9 @@ yf::world::world(game* game, camera *camera, const char* path_to_tileset, object
 
 	for(int i=1; i<WORLD_MAIN_PATH_NUM_ROOMS; i++)
 	{
-		gate_entrance;
-		if(gate_exit>=2)
-		{
-			gate_entrance=gate_exit-2;
-		}
-		else
-		{
-			gate_entrance=gate_exit+2;
-		}
+		int next_room_direction=rand()%4;
 
-		std::cout << i << std::endl;
-		gate_exit=rand()%4;
-
-		switch(gate_entrance)
+		switch(next_room_direction)
 		{
 			case PATH_GATE_LEFT:
 				current_room_x--;
@@ -139,6 +128,12 @@ yf::world::world(game* game, camera *camera, const char* path_to_tileset, object
 			continue;
 		}
 
+		if(room[current_room_x][current_room_y]==ROOM_MAIN_PATH)
+		{
+			i--;
+			continue;
+		}
+
 		create_main_path_room(current_room_x, current_room_y, gate_entrance, gate_exit);
 	}
 
@@ -173,63 +168,58 @@ void yf::world::create_main_path_room(	const int room_x,
 		world_filling[room_x*WORLD_GRID_SIZE+WORLD_GRID_SIZE-1][room_y*WORLD_GRID_SIZE+i]=TILE_BORDER_WALL;
 	}
 
-	//creating exit gates
-	if(gate_exit==PATH_GATE_LEFT)
+	//creating entrance/exit
+	if(room[room_x-1][room_y]==ROOM_MAIN_PATH && room_x>0) //left
 	{
+		//current room
 		world_filling[room_x*WORLD_GRID_SIZE][room_y*WORLD_GRID_SIZE+1]=TILE_BACKGROUND;
 		world_filling[room_x*WORLD_GRID_SIZE][room_y*WORLD_GRID_SIZE+2]=TILE_BACKGROUND;
 		world_filling[room_x*WORLD_GRID_SIZE][room_y*WORLD_GRID_SIZE+3]=TILE_BACKGROUND;
-	}
 
-	if(gate_exit==PATH_GATE_TOP)
+		//adjacent room
+		world_filling[room_x*WORLD_GRID_SIZE-1][room_y*WORLD_GRID_SIZE+1]=TILE_BACKGROUND;
+		world_filling[room_x*WORLD_GRID_SIZE-1][room_y*WORLD_GRID_SIZE+2]=TILE_BACKGROUND;
+		world_filling[room_x*WORLD_GRID_SIZE-1][room_y*WORLD_GRID_SIZE+3]=TILE_BACKGROUND;
+	}
+	if(room[room_x][room_y+1]==ROOM_MAIN_PATH && room_y<(WORLD_GRID_SIZE_Y-1)) //top
 	{
+		//current room
 		world_filling[room_x*WORLD_GRID_SIZE+1][room_y*WORLD_GRID_SIZE+WORLD_GRID_SIZE-1]=TILE_BACKGROUND;
 		world_filling[room_x*WORLD_GRID_SIZE+2][room_y*WORLD_GRID_SIZE+WORLD_GRID_SIZE-1]=TILE_BACKGROUND;
 		world_filling[room_x*WORLD_GRID_SIZE+3][room_y*WORLD_GRID_SIZE+WORLD_GRID_SIZE-1]=TILE_BACKGROUND;
-	}
 
-	if(gate_exit==PATH_GATE_RIGHT)
+		//adjacent room
+		world_filling[room_x*WORLD_GRID_SIZE+1][room_y*WORLD_GRID_SIZE+WORLD_GRID_SIZE]=TILE_BACKGROUND;
+		world_filling[room_x*WORLD_GRID_SIZE+2][room_y*WORLD_GRID_SIZE+WORLD_GRID_SIZE]=TILE_BACKGROUND;
+		world_filling[room_x*WORLD_GRID_SIZE+3][room_y*WORLD_GRID_SIZE+WORLD_GRID_SIZE]=TILE_BACKGROUND;
+	}
+	if(room[room_x+1][room_y]==ROOM_MAIN_PATH && room_x<(WORLD_GRID_SIZE_X-1)) //right
 	{
+		//current room
 		world_filling[room_x*WORLD_GRID_SIZE+WORLD_GRID_SIZE-1][room_y*WORLD_GRID_SIZE+1]=TILE_BACKGROUND;
 		world_filling[room_x*WORLD_GRID_SIZE+WORLD_GRID_SIZE-1][room_y*WORLD_GRID_SIZE+2]=TILE_BACKGROUND;
 		world_filling[room_x*WORLD_GRID_SIZE+WORLD_GRID_SIZE-1][room_y*WORLD_GRID_SIZE+3]=TILE_BACKGROUND;
-	}
 
-	if(gate_exit==PATH_GATE_BOTTOM)
+		//adjacent room
+		world_filling[room_x*WORLD_GRID_SIZE+WORLD_GRID_SIZE][room_y*WORLD_GRID_SIZE+1]=TILE_BACKGROUND;
+		world_filling[room_x*WORLD_GRID_SIZE+WORLD_GRID_SIZE][room_y*WORLD_GRID_SIZE+2]=TILE_BACKGROUND;
+		world_filling[room_x*WORLD_GRID_SIZE+WORLD_GRID_SIZE][room_y*WORLD_GRID_SIZE+3]=TILE_BACKGROUND;
+	}
+	if(room[room_x][room_y-1]==ROOM_MAIN_PATH && room_y>0) //bottom
 	{
+		//current room
 		world_filling[room_x*WORLD_GRID_SIZE+1][room_y*WORLD_GRID_SIZE]=TILE_BACKGROUND;
 		world_filling[room_x*WORLD_GRID_SIZE+2][room_y*WORLD_GRID_SIZE]=TILE_BACKGROUND;
 		world_filling[room_x*WORLD_GRID_SIZE+3][room_y*WORLD_GRID_SIZE]=TILE_BACKGROUND;
+
+		//adjacent room
+		world_filling[room_x*WORLD_GRID_SIZE+1][room_y*WORLD_GRID_SIZE-1]=TILE_BACKGROUND;
+		world_filling[room_x*WORLD_GRID_SIZE+2][room_y*WORLD_GRID_SIZE-1]=TILE_BACKGROUND;
+		world_filling[room_x*WORLD_GRID_SIZE+3][room_y*WORLD_GRID_SIZE-1]=TILE_BACKGROUND;
 	}
 
-	//creating entrance for a room
-	if(gate_entrance==PATH_GATE_LEFT)
-	{
-		world_filling[room_x*WORLD_GRID_SIZE][room_y*WORLD_GRID_SIZE+1]=TILE_BACKGROUND;
-		world_filling[room_x*WORLD_GRID_SIZE][room_y*WORLD_GRID_SIZE+2]=TILE_BACKGROUND;
-		world_filling[room_x*WORLD_GRID_SIZE][room_y*WORLD_GRID_SIZE+3]=TILE_BACKGROUND;
-	}
 
-	if(gate_entrance==PATH_GATE_TOP)
-	{
-		world_filling[room_x*WORLD_GRID_SIZE+1][room_y*WORLD_GRID_SIZE+WORLD_GRID_SIZE-1]=TILE_BACKGROUND;
-		world_filling[room_x*WORLD_GRID_SIZE+2][room_y*WORLD_GRID_SIZE+WORLD_GRID_SIZE-1]=TILE_BACKGROUND;
-		world_filling[room_x*WORLD_GRID_SIZE+3][room_y*WORLD_GRID_SIZE+WORLD_GRID_SIZE-1]=TILE_BACKGROUND;
-	}
 
-	if(gate_entrance==PATH_GATE_RIGHT)
-	{
-		world_filling[room_x*WORLD_GRID_SIZE+WORLD_GRID_SIZE-1][room_y*WORLD_GRID_SIZE+1]=TILE_BACKGROUND;
-		world_filling[room_x*WORLD_GRID_SIZE+WORLD_GRID_SIZE-1][room_y*WORLD_GRID_SIZE+2]=TILE_BACKGROUND;
-		world_filling[room_x*WORLD_GRID_SIZE+WORLD_GRID_SIZE-1][room_y*WORLD_GRID_SIZE+3]=TILE_BACKGROUND;
-	}
-
-	if(gate_entrance==PATH_GATE_BOTTOM)
-	{
-		world_filling[room_x*WORLD_GRID_SIZE+1][room_y*WORLD_GRID_SIZE]=TILE_BACKGROUND;
-		world_filling[room_x*WORLD_GRID_SIZE+2][room_y*WORLD_GRID_SIZE]=TILE_BACKGROUND;
-		world_filling[room_x*WORLD_GRID_SIZE+3][room_y*WORLD_GRID_SIZE]=TILE_BACKGROUND;
-	}
 	//creating random ground segments
 	int num_floor_segments=rand()%WORLD_MAX_FLOOR_SEGMENTS;
 	for(int i=0; i<num_floor_segments; i++)

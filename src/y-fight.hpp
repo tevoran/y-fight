@@ -18,11 +18,11 @@
 
 //World parameters
 #define WORLD_GRID_SIZE 15
-#define WORLD_GRID_SIZE_X 5 //number of rooms in x-direction
-#define WORLD_GRID_SIZE_Y 5 //number of rooms in y-direction
+#define WORLD_GRID_SIZE_X 10 //number of rooms in x-direction
+#define WORLD_GRID_SIZE_Y 10 //number of rooms in y-direction
 #define WORLD_SIZE_X WORLD_GRID_SIZE*WORLD_GRID_SIZE_X
 #define WORLD_SIZE_Y WORLD_GRID_SIZE*WORLD_GRID_SIZE_Y
-#define WORLD_MAIN_PATH_NUM_ROOMS 2
+#define WORLD_MAIN_PATH_NUM_ROOMS 10
 
 #define WORLD_MAX_FLOOR_SEGMENTS 20
 
