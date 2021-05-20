@@ -1,8 +1,7 @@
 #include "y-fight.hpp"
 
-#undef main
 
-int main(int argc, char *argv[])
+int main( int argc, char **argv)
 {
 	yf::game game("Y-FIGHT");
 	yf::camera camera(0.2, game.resx, game.resy, (int)(0.046*(float)game.resy));
