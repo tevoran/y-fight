@@ -22,9 +22,9 @@
 #define WORLD_GRID_SIZE_Y 10 //number of rooms in y-direction
 #define WORLD_SIZE_X WORLD_GRID_SIZE*WORLD_GRID_SIZE_X
 #define WORLD_SIZE_Y WORLD_GRID_SIZE*WORLD_GRID_SIZE_Y
-#define WORLD_MAIN_PATH_NUM_ROOMS 10
+#define WORLD_MAIN_PATH_NUM_ROOMS 4
 
-#define WORLD_MAX_FLOOR_SEGMENTS 20
+#define WORLD_MAX_FLOOR_SEGMENTS 7
 
 #define TILE_GROUND 0
 #define TILE_BACKGROUND 1
@@ -125,10 +125,17 @@ namespace yf
 		camera *m_camera=NULL;
 		int world_filling[WORLD_SIZE_X][WORLD_SIZE_Y];
 		int room[WORLD_GRID_SIZE_X][WORLD_GRID_SIZE_Y];
+
+	private:
 		void create_main_path_room(	const int room_x, 
 									const int room_y, 
 									const int gate_entrance,
 									const int gate_exit);
+	public:
+		//location of level/game exit
+		int exit_x=0;
+		int exit_y=0;
+
 	public:
 		//player gets located at the level entrance
 		world(game* game, camera *camera, const char* path_to_tileset, object& player);

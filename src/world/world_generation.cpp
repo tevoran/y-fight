@@ -135,6 +135,18 @@ yf::world::world(game* game, camera *camera, const char* path_to_tileset, object
 		}
 
 		create_main_path_room(current_room_x, current_room_y, gate_entrance, gate_exit);
+
+		//plant level exit
+		if(i==(WORLD_MAIN_PATH_NUM_ROOMS-1))
+		{
+			exit_x=rand()%(WORLD_GRID_SIZE-2)+1;
+			exit_x=(current_room_x*WORLD_GRID_SIZE)+exit_x;
+			exit_y=rand()%(WORLD_GRID_SIZE-7)+3;
+			exit_y=(current_room_y*WORLD_GRID_SIZE)+exit_y;
+
+			world_filling[exit_x][exit_y]=TILE_ENTRANCE;
+			world_filling[exit_x][exit_y-1]=TILE_GROUND;
+		}
 	}
 
 }
