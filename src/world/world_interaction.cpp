@@ -9,11 +9,12 @@ void yf::world::interact(object& player)
 	int player_tile_x=(int)(player.x/TILE_SIZE_X+0.5);
 	int player_tile_y=(int)(player.y/TILE_SIZE_Y+0.5);
 
-	//collision with border walls
+	//collision with border walls and ground tiles
 	//checking right side
 	if(player_tile_x<WORLD_SIZE_X-1) //avoiding segfaults
 	{
-		if(	world_filling[player_tile_x+1][player_tile_y]==TILE_BORDER_WALL)
+		if(	world_filling[player_tile_x+1][player_tile_y]==TILE_BORDER_WALL ||
+			world_filling[player_tile_x+1][player_tile_y]==TILE_GROUND)
 		{
 			world_collision.x=(player_tile_x+1)*TILE_SIZE_X-m_camera->x;
 			world_collision.y=(m_game->resy-(player_tile_y)*TILE_SIZE_Y)-m_camera->y;
@@ -28,7 +29,8 @@ void yf::world::interact(object& player)
 	//checking left side
 	if(player_tile_x>0) //avoiding segfaults
 	{
-		if(	world_filling[player_tile_x-1][player_tile_y]==TILE_BORDER_WALL)
+		if(	world_filling[player_tile_x-1][player_tile_y]==TILE_BORDER_WALL  ||
+			world_filling[player_tile_x-1][player_tile_y]==TILE_GROUND)
 		{
 			world_collision.x=(player_tile_x-1)*TILE_SIZE_X-m_camera->x;
 			world_collision.y=(m_game->resy-(player_tile_y)*TILE_SIZE_Y)-m_camera->y;
@@ -43,7 +45,8 @@ void yf::world::interact(object& player)
 	//checking top side
 	if(player_tile_y<WORLD_SIZE_Y-1) //avoiding segfaults
 	{
-		if(	world_filling[player_tile_x][player_tile_y+1]==TILE_BORDER_WALL)
+		if(	world_filling[player_tile_x][player_tile_y+1]==TILE_BORDER_WALL ||
+			world_filling[player_tile_x][player_tile_y+1]==TILE_GROUND)
 		{
 			world_collision.x=(player_tile_x)*TILE_SIZE_X-m_camera->x;
 			world_collision.y=(m_game->resy-(player_tile_y+1)*TILE_SIZE_Y)-m_camera->y;
@@ -59,7 +62,8 @@ void yf::world::interact(object& player)
 	if(player_tile_y>0) //avoiding segfaults
 	{
 		//border wall tiles
-		if(	world_filling[player_tile_x][player_tile_y-1]==TILE_BORDER_WALL)
+		if(	world_filling[player_tile_x][player_tile_y-1]==TILE_BORDER_WALL ||
+			world_filling[player_tile_x][player_tile_y-1]==TILE_GROUND)
 		{
 			world_collision.x=(player_tile_x)*TILE_SIZE_X-m_camera->x;
 			world_collision.y=(m_game->resy-(player_tile_y-1)*TILE_SIZE_Y)-m_camera->y;
@@ -69,20 +73,6 @@ void yf::world::interact(object& player)
 				player.y_speed=0;
 				player.standing=true;
 				player.x_speed=0.9*player.x_speed;				
-			}
-		}
-
-		//ground tiles
-		if(world_filling[player_tile_x][player_tile_y-1]==TILE_GROUND)
-		{
-			world_collision.x=(player_tile_x)*TILE_SIZE_X-m_camera->x;
-			world_collision.y=(m_game->resy-(player_tile_y-1)*TILE_SIZE_Y)-m_camera->y;
-			if(collision(player.dst_rect, world_collision))
-			{
-				player.y=(player_tile_y-1)*TILE_SIZE_Y+player.dst_rect.h-1;
-				player.y_speed=0;
-				player.standing=true;
-				player.x_speed=0;				
 			}
 		}
 	}

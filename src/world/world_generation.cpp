@@ -25,7 +25,7 @@ yf::world::world(game* game, camera *camera, const char* path_to_tileset, object
 		}
 	}
 
-	//creating level border
+	//creating world border
 	for(int ix=0; ix<WORLD_SIZE_X; ix++)
 	{
 		world_filling[ix][0]=TILE_BORDER_WALL;
@@ -59,30 +59,93 @@ yf::world::world(game* game, camera *camera, const char* path_to_tileset, object
 
 	std::cout << "entrance: " << entrance_x << "x" << entrance_y << std::endl;
 
-	world_filling[entrance_x][entrance_y+1]=TILE_ENTRANCE;
-	world_filling[entrance_x][entrance_y]=TILE_GROUND;
+	PATH last_room=NONE;
+	create_main_path_room(room_entrance_x, room_entrance_y, last_room);
+
+	//randomly placing level entrance in the first room
+	while(1)
+	{
+		exit_x=rand()%(WORLD_GRID_SIZE-2)+1;
+		exit_x=(room_entrance_x*WORLD_GRID_SIZE)+entrance_x;
+		exit_y=rand()%(WORLD_GRID_SIZE-4)+3;
+		exit_y=(room_entrance_y*WORLD_GRID_SIZE)+entrance_y;
+		//making sure that the exit is not in a wall
+		if(
+			world_filling[entrance_x][entrance_y]!=TILE_BORDER_WALL && 
+			world_filling[entrance_x][entrance_y-1]!=TILE_BORDER_WALL)
+			{
+				world_filling[entrance_x][entrance_y]=TILE_ENTRANCE;
+				world_filling[entrance_x][entrance_y-1]=TILE_GROUND;
+				break;
+			}
+	}
 
 	player.x=(entrance_x)*TILE_SIZE_X; //placing player
-	player.y=(entrance_y+1)*(TILE_SIZE_Y);
+	player.y=(entrance_y)*(TILE_SIZE_Y);
 
-
-	int gate_exit=rand()%4;
-	int gate_entrance;
-	if(gate_exit>=2)
-	{
-		gate_entrance=gate_exit-2;
-	}
-	else
-	{
-		gate_entrance=gate_exit+2;
-	}
-
-	create_main_path_room(room_entrance_x, room_entrance_y, gate_entrance, PATH_NO_EXIT);
 
 	//creating main path
 	int current_room_x=room_entrance_x;
 	int current_room_y=room_entrance_y;
 
+	for(int i=1; i<WORLD_MAIN_PATH_NUM_ROOMS; i++)
+	{
+		PATH next_room=(PATH)(rand()%NONE);
+
+		switch(next_room)
+		{
+			case LEFT:
+				if((current_room_x-1)>=0)
+				{
+					last_room=RIGHT;
+					current_room_x--;
+				}
+				else
+				{
+					i--;
+					continue;
+				}
+				break;
+			case TOP:
+				if((current_room_y+1)<WORLD_GRID_SIZE_Y)
+				{
+					last_room=BOTTOM;
+					current_room_y++;
+				}
+				else
+				{
+					i--;
+					continue;
+				}
+				break;
+			case RIGHT:
+				if((current_room_x+1)<WORLD_GRID_SIZE_X)
+				{
+					last_room=LEFT;
+					current_room_x++;
+				}
+				else
+				{
+					i--;
+					continue;
+				}
+				break;
+			case BOTTOM:
+				if((current_room_y-1)>=0)
+				{
+					last_room=TOP;
+					current_room_y--;
+				}
+				else
+				{
+					i--;
+					continue;
+				}
+				break;
+		}
+		create_main_path_room(current_room_x, current_room_y, last_room);
+	}
+/*
 	for(int i=1; i<WORLD_MAIN_PATH_NUM_ROOMS; i++)
 	{
 		int next_room_direction=rand()%4;
@@ -134,27 +197,34 @@ yf::world::world(game* game, camera *camera, const char* path_to_tileset, object
 			continue;
 		}
 
-		create_main_path_room(current_room_x, current_room_y, gate_entrance, gate_exit);
+		create_main_path_room(current_room_x, current_room_y, last_room);
 
 		//plant level exit
 		if(i==(WORLD_MAIN_PATH_NUM_ROOMS-1))
 		{
-			exit_x=rand()%(WORLD_GRID_SIZE-2)+1;
-			exit_x=(current_room_x*WORLD_GRID_SIZE)+exit_x;
-			exit_y=rand()%(WORLD_GRID_SIZE-7)+3;
-			exit_y=(current_room_y*WORLD_GRID_SIZE)+exit_y;
+			while(1)
+			{
+				exit_x=rand()%(WORLD_GRID_SIZE-2)+1;
+				exit_x=(current_room_x*WORLD_GRID_SIZE)+exit_x;
+				exit_y=rand()%(WORLD_GRID_SIZE-7)+3;
+				exit_y=(current_room_y*WORLD_GRID_SIZE)+exit_y;
 
-			world_filling[exit_x][exit_y]=TILE_ENTRANCE;
-			world_filling[exit_x][exit_y-1]=TILE_GROUND;
+				//making sure that the exit is not in a wall
+				if(
+					world_filling[exit_x][exit_y]!=TILE_BORDER_WALL && 
+					world_filling[exit_x][exit_y-1]!=TILE_BORDER_WALL)
+				{
+					world_filling[exit_x][exit_y]=TILE_ENTRANCE;
+					world_filling[exit_x][exit_y-1]=TILE_GROUND;
+					break;
+				}
+			}
 		}
 	}
-
+*/
 }
 
-void yf::world::create_main_path_room(	const int room_x, 
-										const int room_y, 
-										const int gate_entrance,
-										const int gate_exit)
+void yf::world::create_main_path_room(	const int room_x, const int room_y, const PATH last_room)
 {
 	room[room_x][room_y]=ROOM_MAIN_PATH;
 
@@ -180,8 +250,26 @@ void yf::world::create_main_path_room(	const int room_x,
 		world_filling[room_x*WORLD_GRID_SIZE+WORLD_GRID_SIZE-1][room_y*WORLD_GRID_SIZE+i]=TILE_BORDER_WALL;
 	}
 
-	//creating entrance/exit
-	if(room[room_x-1][room_y]==ROOM_MAIN_PATH && room_x>0) //left
+	//choosing type of room
+	int selection=0;
+	int max_selection=1;
+
+	switch(last_room)
+	{
+		case LEFT:
+			room_horizontal_traversal(room_x, room_y, last_room);
+			break;
+		case TOP:
+			
+			break;
+		case RIGHT:
+			room_horizontal_traversal(room_x, room_y, last_room);
+			break;
+		case BOTTOM:
+			
+			break;
+	}
+/*	if(room[room_x-1][room_y]==ROOM_MAIN_PATH && room_x>0) //left
 	{
 		//current room
 		world_filling[room_x*WORLD_GRID_SIZE][room_y*WORLD_GRID_SIZE+1]=TILE_BACKGROUND;
@@ -230,35 +318,5 @@ void yf::world::create_main_path_room(	const int room_x,
 		world_filling[room_x*WORLD_GRID_SIZE+3][room_y*WORLD_GRID_SIZE-1]=TILE_BACKGROUND;
 	}
 
-
-
-	//creating random ground segments
-	int num_floor_segments=rand()%WORLD_MAX_FLOOR_SEGMENTS;
-	for(int i=0; i<num_floor_segments; i++)
-	{
-		int location_x=rand()%(WORLD_GRID_SIZE-2)+1;
-		int location_y=rand()%(WORLD_GRID_SIZE-2)+1;
-		int seg_length=rand()%(WORLD_GRID_SIZE/2);
-		
-		//don't block exit
-		if(gate_exit==PATH_GATE_BOTTOM && location_y==1)
-		{
-			continue;
-		}
-
-		for(int i=0; i<seg_length; i++)
-		{
-			if(world_filling[room_x*WORLD_GRID_SIZE+location_x+i][room_y*WORLD_GRID_SIZE+location_y]==TILE_ENTRANCE)
-			{
-				continue;
-			}
-
-			world_filling[room_x*WORLD_GRID_SIZE+location_x+i][room_y*WORLD_GRID_SIZE+location_y]=TILE_GROUND;
-			if((location_x+i)>=(WORLD_GRID_SIZE-2))
-			{
-				break;
-			}
-		}
-
-	}
+	create_random_room(room_x, room_y);*/
 }

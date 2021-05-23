@@ -90,7 +90,7 @@ void yf::input_handling(game& game, camera& camera, object& player, object& curs
 	}
 
 	//activating dash
-	if(keyboard_state[SDL_SCANCODE_V] && dash_cooldown==0)
+	if(keyboard_state[SDL_SCANCODE_LALT] && dash_cooldown==0)
 	{
 		dash_x=cursor.x-player.x;
 		dash_y=cursor.y-player.y;

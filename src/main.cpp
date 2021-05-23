@@ -22,7 +22,7 @@ int main( int argc, char **argv)
 		player.render(0);
 
 		cursor.render(0);
-		game.update(true, 60, camera);
+		game.update(false, 60, camera);
 	}
 	return 0;
 }

@@ -22,7 +22,7 @@
 #define WORLD_GRID_SIZE_Y 10 //number of rooms in y-direction
 #define WORLD_SIZE_X WORLD_GRID_SIZE*WORLD_GRID_SIZE_X
 #define WORLD_SIZE_Y WORLD_GRID_SIZE*WORLD_GRID_SIZE_Y
-#define WORLD_MAIN_PATH_NUM_ROOMS 4
+#define WORLD_MAIN_PATH_NUM_ROOMS 2
 
 #define WORLD_MAX_FLOOR_SEGMENTS 7
 
@@ -43,6 +43,8 @@
 #define GRAVITY 1.7*(float)m_game->resy
 
 #define PHYSICS_GRAVITY_FLAG 0x01
+
+enum PATH {LEFT, TOP, RIGHT, BOTTOM, NONE};
 
 namespace yf
 {
@@ -127,10 +129,10 @@ namespace yf
 		int room[WORLD_GRID_SIZE_X][WORLD_GRID_SIZE_Y];
 
 	private:
-		void create_main_path_room(	const int room_x, 
-									const int room_y, 
-									const int gate_entrance,
-									const int gate_exit);
+		void create_main_path_room(	const int room_x, const int room_y, const PATH last_room);
+		void create_random_room( const int room_x, const int room_y);
+
+		void room_horizontal_traversal(const int room_x, const int room_y, const PATH last_room);
 	public:
 		//location of level/game exit
 		int exit_x=0;
