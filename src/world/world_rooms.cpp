@@ -1,21 +1,5 @@
 #include "y-fight.hpp"
 
-#define NUM_ROOM_TYPES 1
-
-
-//choosing random kind of room
-void yf::world::create_random_room( const int room_x, const int room_y)
-{
-	int room_type=rand()%NUM_ROOM_TYPES;
-
-	switch(room_type)
-	{
-		case 0:
-			//room_horizontal_traversal(room_x, room_y);
-			break;
-	}
-
-}
 
 //horizontal traversal room
 void yf::world::room_horizontal_traversal(const int room_x, const int room_y, const PATH last_room)

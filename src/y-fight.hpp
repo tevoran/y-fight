@@ -130,7 +130,6 @@ namespace yf
 
 	private:
 		void create_main_path_room(	const int room_x, const int room_y, const PATH last_room);
-		void create_random_room( const int room_x, const int room_y);
 
 		void room_horizontal_traversal(const int room_x, const int room_y, const PATH last_room);
 	public:
